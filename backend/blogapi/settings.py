@@ -118,6 +118,14 @@ SIMPLE_JWT = {
 }
 
 # CORS configuration (to allow frontend access)
+# CORS configuration (to allow frontend access)
+CORS_ALLOW_ALL_ORIGINS = True
+
+
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # React frontend
+    "https://your-vercel-frontend.vercel.app",  # ✅ Replace with your actual Vercel frontend domain
+    "http://localhost:3000",                    # ✅ Useful for local development
+]
+
+,  # React frontend
 ]
