@@ -102,6 +102,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Django REST framework config
 REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,  # ← Add comma here ✅
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
@@ -109,6 +111,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ),
 }
+
 from datetime import timedelta
 
 SIMPLE_JWT = {
@@ -122,10 +125,10 @@ SIMPLE_JWT = {
 CORS_ALLOW_ALL_ORIGINS = True
 
 
-CORS_ALLOWED_ORIGINS = [  # ✅ Replace with your actual Vercel frontend domain
+CORS_ALLOWED_ORIGINS = [  
     "http://localhost:3000",                    # ✅ Useful for local development
 
 
  # React frontend
-    "https://6849e5307ab995a57d49b994--helpful-phoenix-7cc0bd.netlify.app/",  # ✅ Replace with your actual Vercel frontend domain
+    "https://6849e5307ab995a57d49b994--helpful-phoenix-7cc0bd.netlify.app/",  
 ]
