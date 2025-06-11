@@ -1,8 +1,5 @@
-// src/components/BlogForm.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-const BACKEND_URL = "https://your-render-backend-url.onrender.com"; // 🔁 Replace this with your actual backend URL
 
 const BlogForm = () => {
   const navigate = useNavigate();
@@ -20,7 +17,7 @@ const BlogForm = () => {
     e.preventDefault();
     setLoading(true);
 
-    const accessToken = localStorage.getItem("access"); // Get JWT token
+    const accessToken = localStorage.getItem("access");
 
     if (!accessToken) {
       alert("Unauthorized: Please log in first.");
@@ -29,7 +26,7 @@ const BlogForm = () => {
     }
 
     try {
-      const res = await fetch(`${BACKEND_URL}/api/blogs/`, {
+      const res = await fetch('http://127.0.0.1:8000/api/blogs/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -38,7 +35,7 @@ const BlogForm = () => {
         body: JSON.stringify(formData),
       });
 
-      const data = await res.json(); // Read response body
+      const data = await res.json();
 
       if (res.ok) {
         alert("Blog posted successfully!");

@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
-const BACKEND_URL = "https://your-render-backend-url.onrender.com"; // 🔁 Replace with your actual backend URL
-
 const BlogDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -10,26 +8,30 @@ const BlogDetail = () => {
   const [currentUser, setCurrentUser] = useState('');
 
   useEffect(() => {
-    // Fetch blog details from deployed backend
-    fetch(`${BACKEND_URL}/api/blogs/${id}/`)
+    // Fetch blog details
+    fetch(`http://127.0.0.1:8000/api/blogs/${id}/`)
       .then((res) => res.json())
       .then((data) => setBlog(data));
 
     // Decode JWT to get username
     const token = localStorage.getItem('access');
     if (token) {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      setCurrentUser(payload.username);
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        setCurrentUser(payload.username);
+      } catch (error) {
+        console.error("Error decoding token:", error);
+      }
     }
   }, [id]);
 
   const handleDelete = async () => {
-    const confirm = window.confirm("Are you sure you want to delete this blog?");
-    if (!confirm) return;
+    const confirmDelete = window.confirm("Are you sure you want to delete this blog?");
+    if (!confirmDelete) return;
 
     const token = localStorage.getItem('access');
     try {
-      const res = await fetch(`${BACKEND_URL}/api/blogs/${id}/`, {
+      const res = await fetch(`http://127.0.0.1:8000/api/blogs/${id}/`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
