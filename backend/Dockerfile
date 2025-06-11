@@ -12,4 +12,7 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 COPY . /app/
 
 # Run server
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Run migrations and start the server
+CMD ["sh", "-c", "python manage.py migrate && gunicorn backend.wsgi:application --bind 0.0.0.0:8000"]
+
+
