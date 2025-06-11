@@ -7,9 +7,11 @@ const BlogDetail = () => {
   const [blog, setBlog] = useState(null);
   const [currentUser, setCurrentUser] = useState('');
 
+  const BASE_URL = "https://blog-application-gzkv.onrender.com";
+
   useEffect(() => {
     // Fetch blog details
-    fetch(`http://127.0.0.1:8000/api/blogs/${id}/`)
+    fetch(`${BASE_URL}/api/blogs/${id}/`)
       .then((res) => res.json())
       .then((data) => setBlog(data));
 
@@ -31,7 +33,7 @@ const BlogDetail = () => {
 
     const token = localStorage.getItem('access');
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/blogs/${id}/`, {
+      const res = await fetch(`${BASE_URL}/api/blogs/${id}/`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
