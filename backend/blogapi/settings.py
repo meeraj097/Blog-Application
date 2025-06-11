@@ -127,5 +127,5 @@ CORS_ALLOWED_ORIGINS = [  # ✅ Replace with your actual Vercel frontend domain
 
 
  # React frontend
-    "https://your-vercel-frontend.vercel.app",  # ✅ Replace with your actual Vercel frontend domain
+    "https://6849e5307ab995a57d49b994--helpful-phoenix-7cc0bd.netlify.app/",  # ✅ Replace with your actual Vercel frontend domain
 ]
