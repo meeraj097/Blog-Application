@@ -6,20 +6,23 @@ const BlogList = () => {
   const [blogs, setBlogs] = useState([]);
 
   useEffect(() => {
-    fetch("https://blog-application-gzkv.onrender.com/api/blogs/")
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data.results)) {
-          setBlogs(data.results);
-        } else {
-          setBlogs([]); // fallback
-        }
-      })
-      .catch((err) => {
-        console.error("Failed to fetch blogs:", err);
+  fetch("https://blog-application-gzkv.onrender.com/api/blogs/")
+    .then((res) => res.json())
+    .then((data) => {
+      if (Array.isArray(data.results)) {
+        setBlogs(data.results); // paginated
+      } else if (Array.isArray(data)) {
+        setBlogs(data); // non-paginated
+      } else {
         setBlogs([]);
-      });
-  }, []);
+      }
+    })
+    .catch((err) => {
+      console.error("Failed to fetch blogs:", err);
+      setBlogs([]);
+    });
+}, []);
+
 
   return (
     <div>
