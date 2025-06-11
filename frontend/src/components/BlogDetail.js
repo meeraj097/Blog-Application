@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
+const BACKEND_URL = "https://your-render-backend-url.onrender.com"; // 🔁 Replace with your actual backend URL
+
 const BlogDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -8,12 +10,12 @@ const BlogDetail = () => {
   const [currentUser, setCurrentUser] = useState('');
 
   useEffect(() => {
-    // Fetch blog details
-    fetch(`http://127.0.0.1:8000/api/blogs/${id}/`)
+    // Fetch blog details from deployed backend
+    fetch(`${BACKEND_URL}/api/blogs/${id}/`)
       .then((res) => res.json())
       .then((data) => setBlog(data));
 
-    // Decode JWT to get username (or fetch from /me endpoint if you have it)
+    // Decode JWT to get username
     const token = localStorage.getItem('access');
     if (token) {
       const payload = JSON.parse(atob(token.split('.')[1]));
@@ -27,7 +29,7 @@ const BlogDetail = () => {
 
     const token = localStorage.getItem('access');
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/blogs/${id}/`, {
+      const res = await fetch(`${BACKEND_URL}/api/blogs/${id}/`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,

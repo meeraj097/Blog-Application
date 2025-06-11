@@ -2,21 +2,26 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+const BACKEND_URL = "https://your-render-backend-url.onrender.com"; // 🔁 Replace with actual backend URL
+
 const BlogList = () => {
   const [blogs, setBlogs] = useState([]);
 
- useEffect(() => {
-  fetch("http://127.0.0.1:8000/api/blogs/")
-    .then((res) => res.json())
-    .then((data) => {
-      if (Array.isArray(data.results)) {
-        setBlogs(data.results);
-      } else {
-        setBlogs([]); // fallback
-      }
-    });
-}, []);
-
+  useEffect(() => {
+    fetch(`${BACKEND_URL}/api/blogs/`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data.results)) {
+          setBlogs(data.results);
+        } else {
+          setBlogs([]); // fallback
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to fetch blogs:", err);
+        setBlogs([]);
+      });
+  }, []);
 
   return (
     <div>
