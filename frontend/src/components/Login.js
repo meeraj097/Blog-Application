@@ -15,7 +15,7 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    fetch('http://127.0.0.1:8000/api/token/', {
+    fetch('https://blog-application-gzkv.onrender.com/api/token/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
@@ -24,16 +24,17 @@ const Login = () => {
       .then((data) => {
         if (data.access) {
           localStorage.setItem("access", data.access);
-          window.location.href = "/blogs"; // 👈 Redirect to public blog list
-
-          localStorage.setItem('refresh', data.refresh);
+          localStorage.setItem("refresh", data.refresh);
           alert("Login successful!");
-          navigate('/');
+          navigate('/blogs');
         } else {
-          alert("Login failed.");
+          alert("Login failed. Please check your credentials.");
         }
       })
-      .catch((err) => console.error('Login error:', err));
+      .catch((err) => {
+        console.error('Login error:', err);
+        alert("Login failed due to network or server error.");
+      });
   };
 
   return (
