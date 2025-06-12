@@ -13,22 +13,23 @@ const BlogForm = () => {
 
   // Fetch existing blog data for edit
   useEffect(() => {
-    if (isEdit) {
-      fetch(`https://blog-application-gzkv.onrender.com/api/blogs/${id}/`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+  if (isEdit) {
+    fetch(`https://blog-application-gzkv.onrender.com/api/blogs/${id}/`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+      .then(res => res.json())
+      .then(data => {
+        setFormData({ title: data.title, content: data.content });
       })
-        .then(res => res.json())
-        .then(data => {
-          setFormData({ title: data.title, content: data.content });
-        })
-        .catch(err => {
-          console.error("Error fetching blog data", err);
-          alert("Failed to load blog data.");
-        });
-    }
-  }, [id]);
+      .catch(err => {
+        console.error("Error fetching blog data", err);
+        alert("Failed to load blog data.");
+      });
+  }
+}, [id, isEdit, accessToken]);
+
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
