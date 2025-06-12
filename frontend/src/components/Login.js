@@ -26,7 +26,8 @@ const Login = () => {
           localStorage.setItem("access", data.access);
           localStorage.setItem("refresh", data.refresh);
           alert("Login successful!");
-          navigate('/blogs');
+          navigate('/admin'); // ✅ new - if your admin page route is `/admin`
+
         } else {
           alert("Login failed. Please check your credentials.");
         }

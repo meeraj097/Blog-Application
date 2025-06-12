@@ -5,38 +5,32 @@ import BlogList from './components/BlogList';
 import BlogDetail from './components/BlogDetail';
 import BlogForm from './components/BlogForm';
 import Login from './components/Login';
+import AdminPage from './components/AdminPage'; // ✅ import this
 
 function App() {
   const isAuthenticated = !!localStorage.getItem('access');
-
-  const handleLogout = () => {
-    localStorage.removeItem('access');
-    localStorage.removeItem('refresh');
-    window.location.href = '/';
-  };
 
   return (
     <Router>
       <div style={{ padding: '1rem' }}>
         <h1>All Blogs</h1>
 
-        {/* Show only after login */}
-        {isAuthenticated ? (
-          <div style={{ marginBottom: "1rem" }}>
-            <Link to="/create" style={{ marginRight: "1rem" }}>+ Create Blog</Link>
-            <button onClick={handleLogout}>Logout</button>
-          </div>
-        ) : (
-          <div style={{ marginBottom: "1rem" }}>
+        <div style={{ marginBottom: "1rem" }}>
+          {isAuthenticated ? (
+            <>
+              <Link to="/admin">Admin</Link>
+            </>
+          ) : (
             <Link to="/login">Login</Link>
-          </div>
-        )}
+          )}
+        </div>
 
         <Routes>
           <Route path="/" element={<BlogList />} />
           <Route path="/blogs/:id" element={<BlogDetail />} />
           <Route path="/create" element={<BlogForm />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/admin" element={<AdminPage />} /> {/* ✅ new route */}
         </Routes>
       </div>
     </Router>
