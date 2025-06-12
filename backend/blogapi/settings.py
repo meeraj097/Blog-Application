@@ -126,9 +126,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 
 CORS_ALLOWED_ORIGINS = [  
-    "http://localhost:3000",                    # ✅ Useful for local development
-
-
- # React frontend
-    "https://6849e5307ab995a57d49b994--helpful-phoenix-7cc0bd.netlify.app/",  
+    "http://localhost:3000",  # ✅ Local development
+    "https://6849e5307ab995a57d49b994--helpful-phoenix-7cc0bd.netlify.app"  # ✅ No trailing slash
 ]
+
