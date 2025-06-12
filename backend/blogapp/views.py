@@ -12,18 +12,22 @@ def create_test_user(request):
         User.objects.create_superuser("admin", "admin@example.com", "admin123")
         return JsonResponse({"message": "Test admin user created"})
     return JsonResponse({"message": "Admin already exists"})
+
 class BlogPagination(PageNumberPagination):
     page_size = 10
 
 class BlogListCreateView(generics.ListCreateAPIView):
-    queryset = BlogPost.objects.all().order_by('-created_at')
     serializer_class = BlogSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     pagination_class = BlogPagination
 
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            return BlogPost.objects.filter(author=self.request.user).order_by('-created_at')
+        return BlogPost.objects.none()
+
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
-
 
 class BlogDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = BlogPost.objects.all()
