@@ -91,41 +91,43 @@ If you're not using Docker, install backend & frontend dependencies manually:
 
 Backend
 
+```
+cd backend
 
-
--cd backend
-
--python -m venv env
+python -m venv env
 
 env\Scripts\activate      # On Windows
 
 pip install -r requirements.txt
 
 python manage.py runserver
+```
 
 
 Frontend
 
-
--cd frontend
-
-
--npm install
+```
+cd frontend
 
 
--npm start
+npm install
 
+
+npm start
+```
 
 ✅ Features
 
 
 Admin Login
 
+
 JWT Authentication
 
 Blog CRUD (Create, Read, Update, Delete)
 
 Responsive UI
+
 
 📄 License
 
