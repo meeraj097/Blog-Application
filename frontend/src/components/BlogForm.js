@@ -1,13 +1,26 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const BlogForm = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    title: '',
-    content: '',
-  });
+  const { id } = useParams(); // If this exists, we're editing
+  const [formData, setFormData] = useState({ title: '', content: '' });
   const [loading, setLoading] = useState(false);
+
+  const accessToken = localStorage.getItem("access");
+
+  useEffect(() => {
+    if (id && accessToken) {
+      fetch(`https://blog-application-gzkv.onrender.com/api/blogs/${id}/`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
+      })
+        .then(res => res.json())
+        .then(data => setFormData({ title: data.title, content: data.content }))
+        .catch(err => console.error("Failed to fetch blog:", err));
+    }
+  }, [id]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -17,17 +30,20 @@ const BlogForm = () => {
     e.preventDefault();
     setLoading(true);
 
-    const accessToken = localStorage.getItem("access");
-
     if (!accessToken) {
       alert("Unauthorized: Please log in first.");
       setLoading(false);
       return;
     }
 
+    const url = id
+      ? `https://blog-application-gzkv.onrender.com/api/blogs/${id}/`
+      : 'https://blog-application-gzkv.onrender.com/api/blogs/';
+    const method = id ? 'PUT' : 'POST';
+
     try {
-      const res = await fetch('https://blog-application-gzkv.onrender.com/api/blogs/', {
-        method: 'POST',
+      const res = await fetch(url, {
+        method,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${accessToken}`,
@@ -38,13 +54,11 @@ const BlogForm = () => {
       const data = await res.json();
 
       if (res.ok) {
-        alert("Blog posted successfully!");
-        navigate('/');
-      } else if (res.status === 401) {
-        alert("Unauthorized: Please log in again.");
+        alert(id ? "Blog updated successfully!" : "Blog posted successfully!");
+        navigate('/admin');
       } else {
         console.error("Error response:", data);
-        alert(`Error posting blog: ${res.status} - ${data.detail || "Unknown error"}`);
+        alert(`Error: ${res.status} - ${data.detail || "Unknown error"}`);
       }
     } catch (err) {
       console.error('Network error:', err);
@@ -56,7 +70,7 @@ const BlogForm = () => {
 
   return (
     <form onSubmit={handleSubmit} style={{ padding: '2rem' }}>
-      <h2>Create New Blog</h2>
+      <h2>{id ? "Edit Blog" : "Create New Blog"}</h2>
       <div>
         <label>Title:</label><br />
         <input
@@ -80,7 +94,7 @@ const BlogForm = () => {
         />
       </div>
       <button type="submit" style={{ marginTop: "1rem" }} disabled={loading}>
-        {loading ? "Posting..." : "Post Blog"}
+        {loading ? (id ? "Updating..." : "Posting...") : (id ? "Update Blog" : "Post Blog")}
       </button>
     </form>
   );

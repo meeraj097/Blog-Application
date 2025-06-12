@@ -31,6 +31,7 @@ function App() {
           <Route path="/create" element={<BlogForm />} />
           <Route path="/login" element={<Login />} />
           <Route path="/admin" element={<AdminPage />} /> {/* ✅ new route */}
+          <Route path="/edit/:id" element={<BlogForm />} />
         </Routes>
       </div>
     </Router>
