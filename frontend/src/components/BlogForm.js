@@ -1,24 +1,32 @@
-import React, { useState, useEffect } from 'react';
+// src/components/BlogForm.js
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const BlogForm = () => {
   const navigate = useNavigate();
-  const { id } = useParams(); // If this exists, we're editing
+  const { id } = useParams(); // Get blog ID from URL if editing
+  const isEdit = Boolean(id); // Check if it's edit mode
   const [formData, setFormData] = useState({ title: '', content: '' });
   const [loading, setLoading] = useState(false);
 
   const accessToken = localStorage.getItem("access");
 
+  // Fetch existing blog data for edit
   useEffect(() => {
-    if (id && accessToken) {
+    if (isEdit) {
       fetch(`https://blog-application-gzkv.onrender.com/api/blogs/${id}/`, {
         headers: {
-          'Authorization': `Bearer ${accessToken}`
-        }
+          Authorization: `Bearer ${accessToken}`,
+        },
       })
         .then(res => res.json())
-        .then(data => setFormData({ title: data.title, content: data.content }))
-        .catch(err => console.error("Failed to fetch blog:", err));
+        .then(data => {
+          setFormData({ title: data.title, content: data.content });
+        })
+        .catch(err => {
+          console.error("Error fetching blog data", err);
+          alert("Failed to load blog data.");
+        });
     }
   }, [id]);
 
@@ -36,12 +44,13 @@ const BlogForm = () => {
       return;
     }
 
-    const url = id
-      ? `https://blog-application-gzkv.onrender.com/api/blogs/${id}/`
-      : 'https://blog-application-gzkv.onrender.com/api/blogs/';
-    const method = id ? 'PUT' : 'POST';
-
     try {
+      const url = isEdit
+        ? `https://blog-application-gzkv.onrender.com/api/blogs/${id}/`
+        : `https://blog-application-gzkv.onrender.com/api/blogs/`;
+
+      const method = isEdit ? "PUT" : "POST";
+
       const res = await fetch(url, {
         method,
         headers: {
@@ -51,12 +60,11 @@ const BlogForm = () => {
         body: JSON.stringify(formData),
       });
 
-      const data = await res.json();
-
       if (res.ok) {
-        alert(id ? "Blog updated successfully!" : "Blog posted successfully!");
+        alert(`Blog ${isEdit ? 'updated' : 'created'} successfully!`);
         navigate('/admin');
       } else {
+        const data = await res.json();
         console.error("Error response:", data);
         alert(`Error: ${res.status} - ${data.detail || "Unknown error"}`);
       }
@@ -70,7 +78,7 @@ const BlogForm = () => {
 
   return (
     <form onSubmit={handleSubmit} style={{ padding: '2rem' }}>
-      <h2>{id ? "Edit Blog" : "Create New Blog"}</h2>
+      <h2>{isEdit ? "Edit Blog" : "Create New Blog"}</h2>
       <div>
         <label>Title:</label><br />
         <input
@@ -94,7 +102,7 @@ const BlogForm = () => {
         />
       </div>
       <button type="submit" style={{ marginTop: "1rem" }} disabled={loading}>
-        {loading ? (id ? "Updating..." : "Posting...") : (id ? "Update Blog" : "Post Blog")}
+        {loading ? (isEdit ? "Updating..." : "Posting...") : (isEdit ? "Update Blog" : "Post Blog")}
       </button>
     </form>
   );
