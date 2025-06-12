@@ -12,4 +12,5 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 COPY . /app/
 
 # Run migrations and start the server
-CMD sh -c "python manage.py migrate && gunicorn blogapi.wsgi:application --bind 0.0.0.0:8000"
+CMD bash -c "python manage.py migrate && gunicorn blogapi.wsgi:application --bind 0.0.0.0:8000"
+
