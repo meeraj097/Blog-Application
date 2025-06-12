@@ -58,19 +58,22 @@ blog-app/
    git clone https://github.com/meeraj097/Blog-Application.git
    cd Blog-Application
    
-Run the Application
+2. Run the Application
+
+   ```
+   docker-compose up
+   ```
+
+3. Access the App
+
+   Frontend: http://localhost:3000
+   
+   Backend API: http://localhost:8000/api/blogs/
+
+---
 
 
-
-docker-compose up
-
-Access the App
-
-Frontend: http://localhost:3000
-
-Backend API: http://localhost:8000/api/blogs/
-
-🛠 Tech Stack
+## 🛠 Tech Stack
 
 Frontend: React, React Router DOM
 
@@ -80,9 +83,10 @@ Database: SQLite (for development)
 
 Containerization: Docker, Docker Compose
 
+---
 
 
-📦 Installing Requirements Manually (Alternative)
+## 📦 Installing Requirements Manually (Alternative)
 
 
 If you're not using Docker, install backend & frontend dependencies manually:
@@ -109,17 +113,16 @@ Frontend
 ```
 cd frontend
 
-
 npm install
-
 
 npm start
 ```
+---
 
-✅ Features
+## ✅ Features
 
 
-Admin Login
+### Admin Login
 
 
 JWT Authentication
@@ -128,17 +131,59 @@ Blog CRUD (Create, Read, Update, Delete)
 
 Responsive UI
 
+---
 
-📄 License
+## 🔗 Live Deployment
+
+- **Frontend**: [Blog Application Frontend](https://684a77ffaffbb8b4dc4fd5b1--helpful-phoenix-7cc0bd.netlify.app/)
+- **Backend Admin Creation Endpoint**: [Create Admin User](https://blog-application-gzkv.onrender.com/api/create-admin/)
+
+```
+Username: admin
+Password: admin123
+```
+
+---
+
+## 🛠 Admin Login – Invalid Credentials Issue
+
+If the frontend displays **"Invalid Credentials"** during login, follow these steps:
+
+1. Visit this link in your browser to create the default admin user:  
+   👉 [https://blog-application-gzkv.onrender.com/api/create-admin/](https://blog-application-gzkv.onrender.com/api/create-admin/)
+
+2. The response will be either:
+   - `{"message": "Test admin user created"}` – Admin user was created successfully.
+   - `{"message": "Admin already exists"}` – Admin user already exists.
+
+3. Once this is done, open the deployed frontend link:  
+   👉 [https://684a77ffaffbb8b4dc4fd5b1--helpful-phoenix-7cc0bd.netlify.app/](https://684a77ffaffbb8b4dc4fd5b1--helpful-phoenix-7cc0bd.netlify.app/)
+
+4. Log in using the default credentials:
+   
+ ```
+Username: admin
+Password: admin123
+```
+
+---
+
+
+## 📄 License
 
 
 This project is licensed under the MIT License.
 
-🙋‍♂️ Author
+---
+
+## 🙋‍♂️ Author
 
 Kakarla Meeraj
 
 GitHub: meeraj097
+
+
+---
 
 
 
@@ -147,14 +192,6 @@ GitHub: meeraj097
 Save this content into a new file `README.md` inside your root directory (`blog-app`), commit and push again:
 
 
-
-
-
-
-Login Credentials 
-
-Username - admin
-Password - admin123
 
 ```bash
 git add README.md
