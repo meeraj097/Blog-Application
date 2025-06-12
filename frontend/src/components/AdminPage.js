@@ -1,5 +1,5 @@
 // src/components/AdminPage.js
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const AdminPage = () => {
@@ -9,11 +9,8 @@ const AdminPage = () => {
   const navigate = useNavigate();
   const accessToken = localStorage.getItem('access');
 
-  useEffect(() => {
-    fetchBlogs(currentPage);
-  }, [currentPage]);
-
-  const fetchBlogs = async (page) => {
+  // ✅ useCallback ensures stable reference for fetchBlogs used in useEffect
+  const fetchBlogs = useCallback(async (page = currentPage) => {
     setLoading(true);
     try {
       const res = await fetch(`https://blog-application-gzkv.onrender.com/api/blogs/?page=${page}`, {
@@ -28,7 +25,11 @@ const AdminPage = () => {
       alert("Error fetching blogs");
     }
     setLoading(false);
-  };
+  }, [accessToken, currentPage]);
+
+  useEffect(() => {
+    fetchBlogs();
+  }, [fetchBlogs]);
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this blog?")) return;
@@ -88,14 +89,25 @@ const AdminPage = () => {
           {/* Pagination Controls */}
           <div style={{ marginTop: "1rem" }}>
             <button
-              onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
+              onClick={() => {
+                const newPage = Math.max(currentPage - 1, 1);
+                setCurrentPage(newPage);
+                fetchBlogs(newPage);
+              }}
               disabled={currentPage === 1}
               style={{ marginRight: "1rem" }}
             >
               Prev
             </button>
             <span>Page {currentPage}</span>
-            <button onClick={() => setCurrentPage(p => p + 1)} style={{ marginLeft: "1rem" }}>
+            <button
+              onClick={() => {
+                const newPage = currentPage + 1;
+                setCurrentPage(newPage);
+                fetchBlogs(newPage);
+              }}
+              style={{ marginLeft: "1rem" }}
+            >
               Next
             </button>
           </div>
