@@ -80,19 +80,22 @@ Database: SQLite (for development)
 
 Containerization: Docker, Docker Compose
 
+
+
 📦 Installing Requirements Manually (Alternative)
 
 
 If you're not using Docker, install backend & frontend dependencies manually:
 
+
+
 Backend
 
 
-bash
 
-cd backend
+-cd backend
 
-python -m venv env
+-python -m venv env
 
 env\Scripts\activate      # On Windows
 
@@ -104,13 +107,13 @@ python manage.py runserver
 Frontend
 
 
-bash
+-cd frontend
 
-cd frontend
 
-npm install
+-npm install
 
-npm start
+
+-npm start
 
 
 ✅ Features
