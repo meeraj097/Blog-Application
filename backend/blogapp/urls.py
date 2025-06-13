@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import BlogListCreateView, BlogDetailView, MyBlogListView
+from .views import BlogListCreateView, BlogDetailView, MyBlogListView, CreateAdminUser
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 
@@ -13,5 +13,5 @@ urlpatterns = [
     path('blogs/', BlogListCreateView.as_view(), name='blog-list-create'),
     path('blogs/<int:pk>/', BlogDetailView.as_view(), name='blog-detail'),
     path('myblogs/', MyBlogListView.as_view(), name='myblogs'),
-    path('create-admin/', create_test_user),
+    path('create-admin/', CreateAdminUser.as_view(), name='create-admin'),
 ]
