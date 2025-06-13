@@ -4,32 +4,27 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 const BlogForm = () => {
   const navigate = useNavigate();
-  const { id } = useParams(); // Get blog ID from URL if editing
-  const isEdit = Boolean(id); // Check if it's edit mode
+  const { id } = useParams();
+  const isEdit = Boolean(id);
   const [formData, setFormData] = useState({ title: '', content: '' });
   const [loading, setLoading] = useState(false);
-
   const accessToken = localStorage.getItem("access");
 
-  // Fetch existing blog data for edit
   useEffect(() => {
-  if (isEdit) {
-    fetch(`https://blog-application-gzkv.onrender.com/api/blogs/${id}/`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
-      .then(res => res.json())
-      .then(data => {
-        setFormData({ title: data.title, content: data.content });
+    if (isEdit) {
+      fetch(`https://blog-application-gzkv.onrender.com/api/blogs/${id}/`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       })
-      .catch(err => {
-        console.error("Error fetching blog data", err);
-        alert("Failed to load blog data.");
-      });
-  }
-}, [id, isEdit, accessToken]);
-
+        .then(res => res.json())
+        .then(data => setFormData({ title: data.title, content: data.content }))
+        .catch(err => {
+          console.error("Error fetching blog data", err);
+          alert("Failed to load blog data.");
+        });
+    }
+  }, [id, isEdit, accessToken]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -66,7 +61,6 @@ const BlogForm = () => {
         navigate('/admin');
       } else {
         const data = await res.json();
-        console.error("Error response:", data);
         alert(`Error: ${res.status} - ${data.detail || "Unknown error"}`);
       }
     } catch (err) {
@@ -78,8 +72,10 @@ const BlogForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ padding: '2rem' }}>
-      <h2>{isEdit ? "Edit Blog" : "Create New Blog"}</h2>
+    <form onSubmit={handleSubmit} style={{ padding: '1rem', maxWidth: "800px", margin: "auto" }}>
+      <h2 style={{ fontSize: "1.8rem", marginBottom: "1rem" }}>
+        {isEdit ? "Edit Blog" : "Create New Blog"}
+      </h2>
       <div>
         <label>Title:</label><br />
         <input
@@ -88,7 +84,7 @@ const BlogForm = () => {
           value={formData.title}
           onChange={handleChange}
           required
-          style={{ width: "100%", padding: "0.5rem" }}
+          style={{ width: "100%", padding: "0.5rem", fontSize: "1rem" }}
         />
       </div>
       <div style={{ marginTop: '1rem' }}>
@@ -99,10 +95,21 @@ const BlogForm = () => {
           onChange={handleChange}
           required
           rows={6}
-          style={{ width: "100%", padding: "0.5rem" }}
+          style={{ width: "100%", padding: "0.5rem", fontSize: "1rem" }}
         />
       </div>
-      <button type="submit" style={{ marginTop: "1rem" }} disabled={loading}>
+      <button
+        type="submit"
+        style={{
+          marginTop: "1rem",
+          padding: "0.6rem 1.2rem",
+          backgroundColor: "#007bff",
+          color: "#fff",
+          border: "none",
+          borderRadius: "4px"
+        }}
+        disabled={loading}
+      >
         {loading ? (isEdit ? "Updating..." : "Posting...") : (isEdit ? "Update Blog" : "Post Blog")}
       </button>
     </form>
