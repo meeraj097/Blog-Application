@@ -122,11 +122,13 @@ SIMPLE_JWT = {
 
 # CORS configuration (to allow frontend access)
 # CORS configuration (to allow frontend access)
-CORS_ALLOW_ALL_ORIGINS = True
+#CORS_ALLOW_ALL_ORIGINS = True
 
 
 CORS_ALLOWED_ORIGINS = [  
     "http://localhost:3000",  # ✅ Local development
     "https://6849e5307ab995a57d49b994--helpful-phoenix-7cc0bd.netlify.app"  # ✅ No trailing slash
+    "https://comfy-bubblegum-e9c093.netlify.app",  # ✅ your deployed Netlify domain
+
 ]
 
