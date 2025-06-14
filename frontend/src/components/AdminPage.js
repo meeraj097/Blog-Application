@@ -1,44 +1,102 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const AdminPage = () => {
   const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const accessToken = localStorage.getItem("access");
   const navigate = useNavigate();
 
-  const fetchBlogs = () => {
-    fetch('https://blog-application-gzkv.onrender.com/api/myblogs/', {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('access')}`,
-      },
-    })
-      .then(res => res.json())
-      .then(data => setBlogs(data))
-      .catch(err => console.error('Error:', err));
+  const fetchBlogs = useCallback(async (page = currentPage) => {
+    setLoading(true);
+    try {
+      const res = await fetch(`https://blog-application-gzkv.onrender.com/api/myblogs/?page=${page}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      const data = await res.json();
+      setBlogs(data.results || []);
+    } catch (err) {
+      alert("Error fetching blogs");
+    }
+    setLoading(false);
+  }, [accessToken, currentPage]);
+
+  const deleteBlog = async (id) => {
+    try {
+      const res = await fetch(`https://blog-application-gzkv.onrender.com/api/blogs/${id}/`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (res.ok) {
+        alert("Blog deleted successfully!");
+        fetchBlogs();
+      } else {
+        alert("Failed to delete blog");
+      }
+    } catch (err) {
+      alert("Error deleting blog");
+    }
   };
 
   useEffect(() => {
+    if (!accessToken) {
+      alert("Please log in to access admin features.");
+      navigate("/login");
+      return;
+    }
+
     fetchBlogs();
-  }, []);
+  }, [accessToken, currentPage, fetchBlogs, navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
+    navigate("/");
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) setCurrentPage(prev => prev - 1);
+  };
+
+  const handleNextPage = () => {
+    setCurrentPage(prev => prev + 1);
+  };
 
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '1rem' }}>
-      <h2 style={{ textAlign: 'center' }}>Admin Dashboard</h2>
-      <div style={{ textAlign: 'center', margin: '1rem' }}>
-        <button onClick={() => navigate('/create')} style={{ padding: '0.5rem 1rem', background: '#28a745', color: '#fff', border: 'none', borderRadius: '4px' }}>
-          Create Blog
-        </button>
-      </div>
-      {blogs.length === 0 ? (
-        <p style={{ textAlign: 'center' }}>No blogs available</p>
-      ) : (
-        blogs.map(blog => (
-          <div key={blog.id} style={{ border: '1px solid #ccc', padding: '1rem', marginBottom: '1rem' }}>
-            <h3>{blog.title}</h3>
-            <p>{blog.content}</p>
-            <Link to={`/edit/${blog.id}`} style={{ marginRight: '1rem' }}>Edit</Link>
-          </div>
-        ))
+    <div>
+      <h2>Admin Dashboard</h2>
+      <Link to="/create">
+        <button>Create New Blog</button>
+      </Link>
+      <button onClick={handleLogout}>Logout</button>
+      {loading ? <p>Loading...</p> : (
+        <div>
+          {blogs.length === 0 ? <p>No blogs found</p> : (
+            blogs.map(blog => (
+              <div key={blog.id}>
+                <h3>{blog.title}</h3>
+                <p>{blog.content}</p>
+                <Link to={`/blogs/${blog.id}`}>View</Link>
+                <Link to={`/edit/${blog.id}`}>
+                  <button>Edit</button>
+                </Link>
+                <button onClick={() => deleteBlog(blog.id)}>Delete</button>
+              </div>
+            ))
+          )}
+        </div>
       )}
+      <div>
+        <button onClick={handlePrevPage} disabled={currentPage === 1}>Previous</button>
+        <span> Page {currentPage} </span>
+        <button onClick={handleNextPage}>Next</button>
+      </div>
     </div>
   );
 };
