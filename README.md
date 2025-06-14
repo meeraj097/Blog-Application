@@ -23,6 +23,7 @@ blog-app/
 │ └── manage.py
 
 │
+
 ├──  frontend/ # React frontend
 
 │ ├── public/
