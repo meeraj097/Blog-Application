@@ -1,17 +1,9 @@
 from django.urls import path
 from .views import BlogListCreateView, BlogDetailView, MyBlogListView, CreateAdminUser
-from django.contrib.auth.models import User
-from django.http import JsonResponse
-
-def create_test_user(request):
-    if not User.objects.filter(username="admin").exists():
-        User.objects.create_superuser("admin", "admin@example.com", "admin123")
-        return JsonResponse({"message": "Test admin user created"})
-    return JsonResponse({"message": "Admin already exists"})
 
 urlpatterns = [
-    path('blogs/', BlogListCreateView.as_view(), name='blog-list-create'),
-    path('blogs/<int:pk>/', BlogDetailView.as_view(), name='blog-detail'),
-    path('myblogs/', MyBlogListView.as_view(), name='myblogs'),
-    path('create-admin/', CreateAdminUser.as_view(), name='create-admin'),
+    path('blogs/', BlogListCreateView.as_view(), name='blog-list-create'),      # POST + GET all blogs
+    path('blogs/<int:pk>/', BlogDetailView.as_view(), name='blog-detail'),      # GET/PUT/DELETE a blog
+    path('myblogs/', MyBlogListView.as_view(), name='myblogs'),                 # GET only admin blogs
+    path('create-admin/', CreateAdminUser.as_view(), name='create-admin'),      # Create test admin
 ]
