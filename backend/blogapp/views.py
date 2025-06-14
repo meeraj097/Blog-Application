@@ -21,6 +21,7 @@ class BlogListCreateView(generics.ListCreateAPIView):
         return BlogPost.objects.all().order_by('-created_at')
 
     def perform_create(self, serializer):
+        print("✅ Creating blog for user:", self.request.user.username)  # Debug line
         serializer.save(author=self.request.user)
 
 class BlogDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -33,9 +34,12 @@ class MyBlogListView(APIView):
 
     def get(self, request):
         if not request.user.is_authenticated:
-            return Response({"detail": "Authentication credentials were not provided."}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(
+                {"detail": "Authentication credentials were not provided."},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
 
-        # ✅ DEBUG: Check if the current user is admin
+        print("🧾 Authenticated user fetching their blogs:", request.user.username)  # Debug
         if request.user.username == "admin":
             print("✅ Yes! This is the admin")
 
@@ -43,11 +47,15 @@ class MyBlogListView(APIView):
         serializer = BlogSerializer(blogs, many=True)
         return Response(serializer.data)
 
-
-
 class CreateAdminUser(APIView):
     def get(self, request):
         if not User.objects.filter(username="admin").exists():
             User.objects.create_superuser("admin", "admin@example.com", "admin123")
-            return Response({"message": "Admin user created successfully"}, status=status.HTTP_201_CREATED)
-        return Response({"message": "Admin user already exists"}, status=status.HTTP_200_OK)
+            return Response(
+                {"message": "Admin user created successfully"},
+                status=status.HTTP_201_CREATED
+            )
+        return Response(
+            {"message": "Admin user already exists"},
+            status=status.HTTP_200_OK
+        )
