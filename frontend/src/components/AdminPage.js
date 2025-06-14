@@ -1,4 +1,3 @@
-// src/components/AdminPage.js
 import React, { useEffect, useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -6,8 +5,8 @@ const AdminPage = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const accessToken = localStorage.getItem("access");
   const navigate = useNavigate();
-  const accessToken = localStorage.getItem('access');
 
   const fetchBlogs = useCallback(async (page = currentPage) => {
     setLoading(true);
@@ -25,23 +24,18 @@ const AdminPage = () => {
     setLoading(false);
   }, [accessToken, currentPage]);
 
-  useEffect(() => {
-    fetchBlogs();
-  }, [fetchBlogs]);
-
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this blog?")) return;
-
+  const deleteBlog = async (id) => {
     try {
       const res = await fetch(`https://blog-application-gzkv.onrender.com/api/blogs/${id}/`, {
-        method: 'DELETE',
+        method: "DELETE",
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      if (res.status === 204) {
-        alert("Blog deleted");
-        fetchBlogs(currentPage);
+
+      if (res.ok) {
+        alert("Blog deleted successfully!");
+        fetchBlogs();
       } else {
         alert("Failed to delete blog");
       }
@@ -50,68 +44,58 @@ const AdminPage = () => {
     }
   };
 
+  useEffect(() => {
+    if (!accessToken) {
+      alert("Please log in to access admin features.");
+      navigate("/login");
+      return;
+    }
+
+    fetchBlogs();
+  }, [accessToken, currentPage, fetchBlogs, navigate]);
+
   const handleLogout = () => {
-    localStorage.removeItem('access');
-    localStorage.removeItem('refresh');
-    navigate('/login');
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
+    navigate("/");
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) setCurrentPage(prev => prev - 1);
+  };
+
+  const handleNextPage = () => {
+    setCurrentPage(prev => prev + 1);
   };
 
   return (
-    <div style={{ padding: '1rem', maxWidth: '800px', margin: 'auto' }}>
+    <div>
       <h2>Admin Dashboard</h2>
-      <div style={{ marginBottom: "1rem" }}>
-        <Link to="/create" style={{ marginRight: "1rem", textDecoration: 'underline' }}>+ Create Blog</Link>
-        <button onClick={handleLogout}>Logout</button>
-      </div>
-
-      {loading ? <p>Loading blogs...</p> : (
-        blogs.length === 0 ? (
-          <p>No blogs found.</p>
-        ) : (
-          <ul style={{ padding: 0 }}>
-            {blogs.map(blog => (
-              <li key={blog.id} style={{
-                marginBottom: "1rem",
-                listStyle: "none",
-                padding: "1rem",
-                border: "1px solid #ccc",
-                borderRadius: "8px"
-              }}>
+      <button onClick={handleLogout}>Logout</button>
+      <Link to="/create">
+        <button>Create New Blog</button>
+      </Link>
+      {loading ? <p>Loading...</p> : (
+        <div>
+          {blogs.length === 0 ? <p>No blogs found</p> : (
+            blogs.map(blog => (
+              <div key={blog.id}>
                 <h3>{blog.title}</h3>
                 <p>{blog.content}</p>
-                <div>
-                  <Link to={`/edit/${blog.id}`} style={{ marginRight: "1rem" }}>Edit</Link>
-                  <button onClick={() => handleDelete(blog.id)}>Delete</button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )
+                <Link to={`/blogs/${blog.id}`}>View</Link>
+                <Link to={`/edit/${blog.id}`}>
+                  <button>Edit</button>
+                </Link>
+                <button onClick={() => deleteBlog(blog.id)}>Delete</button>
+              </div>
+            ))
+          )}
+        </div>
       )}
-
-      <div style={{ marginTop: "1rem" }}>
-        <button
-          onClick={() => {
-            const newPage = Math.max(currentPage - 1, 1);
-            setCurrentPage(newPage);
-            fetchBlogs(newPage);
-          }}
-          disabled={currentPage === 1}
-          style={{ marginRight: "1rem" }}
-        >
-          Prev
-        </button>
-        <span>Page {currentPage}</span>
-        <button
-          onClick={() => {
-            const newPage = currentPage + 1;
-            setCurrentPage(newPage);
-            fetchBlogs(newPage);
-          }}
-          style={{ marginLeft: "1rem" }}
-        >
-          Next
-        </button>
+      <div>
+        <button onClick={handlePrevPage} disabled={currentPage === 1}>Previous</button>
+        <span> Page {currentPage} </span>
+        <button onClick={handleNextPage}>Next</button>
       </div>
     </div>
   );

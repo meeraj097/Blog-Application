@@ -5,13 +5,13 @@ const BlogList = () => {
   const [blogs, setBlogs] = useState([]);
 
   useEffect(() => {
-    fetch('https://blog-application-gzkv.onrender.com/api/blogs/')
+    fetch("https://blog-application-gzkv.onrender.com/api/blogs/")
       .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data)) {
-          setBlogs(data);
+        if (Array.isArray(data.results)) {
+          setBlogs(data.results);
         } else {
-          console.error("Expected array but got:", data);
+          console.error("Expected 'results' array but got:", data);
         }
       })
       .catch((error) => console.error('Error fetching blogs:', error));
