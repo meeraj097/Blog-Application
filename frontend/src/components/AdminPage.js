@@ -1,42 +1,46 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
-const Login = ({ redirectTo = "/admin" }) => {
+const AdminPage = () => {
+  const [blogs, setBlogs] = useState([]);
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ username: '', password: '' });
 
-  const handleChange = (e) => {
-    setFormData({...formData, [e.target.name]: e.target.value});
+  const fetchBlogs = () => {
+    fetch('https://blog-application-gzkv.onrender.com/api/myblogs/', {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('access')}`,
+      },
+    })
+      .then(res => res.json())
+      .then(data => setBlogs(data))
+      .catch(err => console.error('Error:', err));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const response = await fetch('https://blog-application-gzkv.onrender.com/api/token/', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(formData),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      localStorage.setItem('access', data.access);
-      localStorage.setItem('refresh', data.refresh);
-      navigate(redirectTo); // ✅ dynamic redirect
-    } else {
-      alert('Invalid credentials');
-    }
-  };
+  useEffect(() => {
+    fetchBlogs();
+  }, []);
 
   return (
-    <div style={{display: 'flex', justifyContent: 'center', marginTop: '100px'}}>
-      <form onSubmit={handleSubmit} style={{display: 'flex', flexDirection: 'column', width: '300px'}}>
-        <input name="username" value={formData.username} onChange={handleChange} placeholder="Username" required />
-        <input name="password" value={formData.password} onChange={handleChange} type="password" placeholder="Password" required />
-        <button type="submit">Login</button>
-      </form>
+    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '1rem' }}>
+      <h2 style={{ textAlign: 'center' }}>Admin Dashboard</h2>
+      <div style={{ textAlign: 'center', margin: '1rem' }}>
+        <button onClick={() => navigate('/create')} style={{ padding: '0.5rem 1rem', background: '#28a745', color: '#fff', border: 'none', borderRadius: '4px' }}>
+          Create Blog
+        </button>
+      </div>
+      {blogs.length === 0 ? (
+        <p style={{ textAlign: 'center' }}>No blogs available</p>
+      ) : (
+        blogs.map(blog => (
+          <div key={blog.id} style={{ border: '1px solid #ccc', padding: '1rem', marginBottom: '1rem' }}>
+            <h3>{blog.title}</h3>
+            <p>{blog.content}</p>
+            <Link to={`/edit/${blog.id}`} style={{ marginRight: '1rem' }}>Edit</Link>
+          </div>
+        ))
+      )}
     </div>
   );
 };
 
-export default Login;
+export default AdminPage;
