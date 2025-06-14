@@ -122,7 +122,7 @@ SIMPLE_JWT = {
 
 # CORS configuration (to allow frontend access)
 # CORS configuration (to allow frontend access)
-#CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = True
 
 
 CORS_ALLOWED_ORIGINS = [  
