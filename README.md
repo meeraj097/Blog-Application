@@ -136,7 +136,7 @@ Responsive UI
 ## 🔗 Live Deployment
 
 
-- **Frontend #1 (Netlify)**: [Blog Application Frontend (Netlify)](https://684a77ffaffbb8b4dc4fd5b1--helpful-phoenix-7cc0bd.netlify.app/)
+- **Frontend #1 (Netlify)**: [Blog Application Frontend (Netlify)](https://comfy-bubblegum-e9c093.netlify.app/)
 - **Frontend #2 (Vercel)**: [Blog Application Frontend (Vercel)](https://blog-application-gamma-nine.vercel.app/)
 - **Backend Admin Creation Endpoint**: [Create Admin User](https://blog-application-gzkv.onrender.com/api/create-admin/)
   
@@ -159,7 +159,7 @@ If the frontend displays **"Invalid Credentials"** during login, follow these st
    - `{"message": "Admin already exists"}` – Admin user already exists.
 
 3. Once this is done, open the deployed frontend link (either one):  
-   👉 [Netlify Frontend](https://684a77ffaffbb8b4dc4fd5b1--helpful-phoenix-7cc0bd.netlify.app/)  
+   👉 [Netlify Frontend](https://comfy-bubblegum-e9c093.netlify.app/)  
    👉 [Vercel Frontend](https://blog-application-gamma-nine.vercel.app/)
 
 4. Log in using the default credentials:
