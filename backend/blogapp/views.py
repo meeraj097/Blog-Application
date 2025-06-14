@@ -29,12 +29,21 @@ class BlogDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
 class MyBlogListView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request):
+        if not request.user.is_authenticated:
+            return Response({"detail": "Authentication credentials were not provided."}, status=status.HTTP_401_UNAUTHORIZED)
+
+        # ✅ DEBUG: Check if the current user is admin
+        if request.user.username == "admin":
+            print("✅ Yes! This is the admin")
+
         blogs = BlogPost.objects.filter(author=request.user).order_by('-created_at')
         serializer = BlogSerializer(blogs, many=True)
         return Response(serializer.data)
+
+
 
 class CreateAdminUser(APIView):
     def get(self, request):
