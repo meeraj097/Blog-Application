@@ -69,32 +69,49 @@ const AdminPage = () => {
   };
 
   return (
-    <div>
+    <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
       <h2>Admin Dashboard</h2>
-      <Link to="/create">
-        <button>Create New Blog</button>
-      </Link>
-      <button onClick={handleLogout}>Logout</button>
+
+      <div style={{ marginBottom: '20px' }}>
+        <Link to="/create">
+          <button style={{ marginRight: '10px', padding: '8px 16px' }}>Create New Blog</button>
+        </Link>
+        <button onClick={handleLogout} style={{ padding: '8px 16px' }}>Logout</button>
+      </div>
+
       {loading ? <p>Loading...</p> : (
         <div>
           {blogs.length === 0 ? <p>No blogs found</p> : (
             blogs.map(blog => (
-              <div key={blog.id}>
+              <div key={blog.id} style={{
+                border: '1px solid #ccc',
+                borderRadius: '5px',
+                padding: '15px',
+                marginBottom: '20px',
+                textAlign: 'left'
+              }}>
                 <h3>{blog.title}</h3>
-                <p>{blog.content}</p>
-                <Link to={`/blogs/${blog.id}`}>View</Link>
-                <Link to={`/edit/${blog.id}`}>
-                  <button>Edit</button>
-                </Link>
-                <button onClick={() => deleteBlog(blog.id)}>Delete</button>
+                {blog.content.split('\n').map((para, idx) => (
+                  <p key={idx}>{para}</p>
+                ))}
+                <div style={{ marginTop: '10px' }}>
+                  <Link to={`/blogs/${blog.id}`}>View</Link> |&nbsp;
+                  <Link to={`/edit/${blog.id}`}>
+                    <button style={{ marginLeft: '5px', marginRight: '5px' }}>Edit</button>
+                  </Link>
+                  <button onClick={() => deleteBlog(blog.id)} style={{ backgroundColor: 'red', color: 'white' }}>
+                    Delete
+                  </button>
+                </div>
               </div>
             ))
           )}
         </div>
       )}
-      <div>
+
+      <div style={{ marginTop: '20px' }}>
         <button onClick={handlePrevPage} disabled={currentPage === 1}>Previous</button>
-        <span> Page {currentPage} </span>
+        <span style={{ margin: '0 10px' }}> Page {currentPage} </span>
         <button onClick={handleNextPage}>Next</button>
       </div>
     </div>
