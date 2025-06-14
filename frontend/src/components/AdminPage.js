@@ -1,104 +1,106 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 
-const AdminPage = () => {
-  const [blogs, setBlogs] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const accessToken = localStorage.getItem("access");
-  const navigate = useNavigate();
+const Dashboard = ({ onCreate }) => {
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
 
-  const fetchBlogs = useCallback(async (page = currentPage) => {
-    setLoading(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem('access');
     try {
-      const res = await fetch(`https://blog-application-gzkv.onrender.com/api/myblogs/?page=${page}`, {
+      const response = await fetch('https://blog-application-gzkv.onrender.com/api/blogs/', {
+        method: 'POST',
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
-      });
-      const data = await res.json();
-      setBlogs(data.results || []);
-    } catch (err) {
-      alert("Error fetching blogs");
-    }
-    setLoading(false);
-  }, [accessToken, currentPage]);
-
-  const deleteBlog = async (id) => {
-    try {
-      const res = await fetch(`https://blog-application-gzkv.onrender.com/api/blogs/${id}/`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+        body: JSON.stringify({ title, content }),
       });
 
-      if (res.ok) {
-        alert("Blog deleted successfully!");
-        fetchBlogs();
+      if (response.ok) {
+        setTitle('');
+        setContent('');
+        onCreate(); // refresh blog list
       } else {
-        alert("Failed to delete blog");
+        alert('Failed to post blog');
       }
-    } catch (err) {
-      alert("Error deleting blog");
+    } catch (error) {
+      console.error('Error:', error);
     }
-  };
-
-  useEffect(() => {
-    if (!accessToken) {
-      alert("Please log in to access admin features.");
-      navigate("/login");
-      return;
-    }
-
-    fetchBlogs();
-  }, [accessToken, currentPage, fetchBlogs, navigate]);
-
-  const handleLogout = () => {
-    localStorage.removeItem("access");
-    localStorage.removeItem("refresh");
-    navigate("/");
-  };
-
-  const handlePrevPage = () => {
-    if (currentPage > 1) setCurrentPage(prev => prev - 1);
-  };
-
-  const handleNextPage = () => {
-    setCurrentPage(prev => prev + 1);
   };
 
   return (
-    <div>
-      <h2>Admin Dashboard</h2>
-      <button onClick={handleLogout}>Logout</button>
-      <Link to="/create">
-        <button>Create New Blog</button>
-      </Link>
-      {loading ? <p>Loading...</p> : (
-        <div>
-          {blogs.length === 0 ? <p>No blogs found</p> : (
-            blogs.map(blog => (
-              <div key={blog.id}>
-                <h3>{blog.title}</h3>
-                <p>{blog.content}</p>
-                <Link to={`/blogs/${blog.id}`}>View</Link>
-                <Link to={`/edit/${blog.id}`}>
-                  <button>Edit</button>
-                </Link>
-                <button onClick={() => deleteBlog(blog.id)}>Delete</button>
-              </div>
-            ))
-          )}
-        </div>
-      )}
-      <div>
-        <button onClick={handlePrevPage} disabled={currentPage === 1}>Previous</button>
-        <span> Page {currentPage} </span>
-        <button onClick={handleNextPage}>Next</button>
+    <div style={styles.container}>
+      <div style={styles.card}>
+        <h2 style={styles.title}>Welcome, admin!</h2>
+        <form onSubmit={handleSubmit} style={styles.form}>
+          <input
+            type="text"
+            placeholder="Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            style={styles.input}
+            required
+          />
+          <textarea
+            placeholder="Content"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            style={styles.textarea}
+            required
+          ></textarea>
+          <button type="submit" style={styles.button}>Post Blog</button>
+        </form>
       </div>
     </div>
   );
 };
 
-export default AdminPage;
+const styles = {
+  container: {
+    height: '85vh',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f0f2f5',
+  },
+  card: {
+    width: '400px',
+    padding: '30px',
+    borderRadius: '12px',
+    backgroundColor: '#fff',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+  },
+  title: {
+    textAlign: 'center',
+    marginBottom: '20px',
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  input: {
+    padding: '10px',
+    marginBottom: '15px',
+    borderRadius: '5px',
+    border: '1px solid #ccc',
+  },
+  textarea: {
+    padding: '10px',
+    marginBottom: '15px',
+    borderRadius: '5px',
+    border: '1px solid #ccc',
+    minHeight: '100px',
+    resize: 'vertical',
+  },
+  button: {
+    padding: '10px',
+    borderRadius: '5px',
+    backgroundColor: '#007bff',
+    color: 'white',
+    border: 'none',
+    cursor: 'pointer',
+  },
+};
+
+export default Dashboard;
