@@ -4,32 +4,21 @@ import { useParams } from 'react-router-dom';
 const BlogDetail = () => {
   const { id } = useParams();
   const [blog, setBlog] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch(`https://blog-application-gzkv.onrender.com/api/blogs/${id}/`)
-      .then(res => {
-        if (!res.ok) throw new Error("Failed to fetch blog");
-        return res.json();
-      })
-      .then(data => {
-        setBlog(data);
-        setLoading(false);
-      })
-      .catch(() => {
-        alert("Failed to load blog.");
-        setLoading(false);
-      });
+      .then((res) => res.json())
+      .then((data) => setBlog(data));
   }, [id]);
 
-  if (loading) return <p>Loading...</p>;
-  if (!blog) return <p>Blog not found</p>;
+  if (!blog) return <p>Loading...</p>;
 
   return (
-    <div>
+    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '1rem' }}>
       <h2>{blog.title}</h2>
-      <p>{blog.content}</p>
-      <p><strong>Author:</strong> {blog.author_username}</p>
+      {blog.content.split('\n').map((para, idx) => (
+        <p key={idx}>{para}</p>
+      ))}
     </div>
   );
 };
