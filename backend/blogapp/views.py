@@ -12,6 +12,7 @@ class BlogPagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 100
 
+# Public blog listing and blog creation
 class BlogListCreateView(generics.ListCreateAPIView):
     serializer_class = BlogSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
@@ -21,32 +22,27 @@ class BlogListCreateView(generics.ListCreateAPIView):
         return BlogPost.objects.all().order_by('-created_at')
 
     def perform_create(self, serializer):
-        print("✅ Creating blog for user:", self.request.user.username)  # Debug line
+        print("✅ Creating blog for user:", self.request.user.username)
         serializer.save(author=self.request.user)
 
+# Publicly viewable, editable by authenticated users
 class BlogDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = BlogPost.objects.all()
     serializer_class = BlogSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
-class MyBlogListView(APIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
+# Shows only the logged-in user's blogs (admin dashboard)
+class MyBlogListView(generics.ListAPIView):
+    serializer_class = BlogSerializer
+    permission_classes = [IsAuthenticated]  # ✅ Enforce login
+    pagination_class = BlogPagination  # ✅ Consistent with public view
 
-    def get(self, request):
-        if not request.user.is_authenticated:
-            return Response(
-                {"detail": "Authentication credentials were not provided."},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
+    def get_queryset(self):
+        user = self.request.user
+        print("🧾 Authenticated user fetching their blogs:", user.username)
+        return BlogPost.objects.filter(author=user).order_by('-created_at')
 
-        print("🧾 Authenticated user fetching their blogs:", request.user.username)  # Debug
-        if request.user.username == "admin":
-            print("✅ Yes! This is the admin")
-
-        blogs = BlogPost.objects.filter(author=request.user).order_by('-created_at')
-        serializer = BlogSerializer(blogs, many=True)
-        return Response(serializer.data)
-
+# Utility view to create admin account
 class CreateAdminUser(APIView):
     def get(self, request):
         if not User.objects.filter(username="admin").exists():
